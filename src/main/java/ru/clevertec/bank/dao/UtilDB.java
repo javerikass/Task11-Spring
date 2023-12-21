@@ -9,5 +9,6 @@ public final class UtilDB {
     public static final String GET_USER_BY_ID = "SELECT * FROM clevertec_system.users WHERE id = ?";
     public static final String UPDATE_USER = "UPDATE clevertec_system.users SET first_name = ?, last_name = ?, mail = ?, age = ? WHERE id = ?";
     public static final String DELETE_USER = "DELETE FROM clevertec_system.users WHERE id = ?";
+    public static final String FIND_ALL = "SELECT * FROM clevertec_system.users LIMIT ? OFFSET ?";
 
 }

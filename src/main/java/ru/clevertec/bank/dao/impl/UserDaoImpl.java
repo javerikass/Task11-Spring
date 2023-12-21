@@ -7,15 +7,14 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import ru.clevertec.bank.dao.UserDao;
+import ru.clevertec.bank.dao.UtilDB;
 import ru.clevertec.bank.entity.User;
 import ru.clevertec.bank.jdbc.ConnectionPool;
-import ru.clevertec.bank.dao.UtilDB;
 
 public class UserDaoImpl implements UserDao {
 
@@ -42,7 +41,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     public Optional<User> getUserById(UUID id) {
-        jdbcTemplate.query(UtilDB.GET_USER_BY_ID, new UserRowMapper());
         return Optional.ofNullable(jdbcTemplate.queryForObject(
             UtilDB.GET_USER_BY_ID,
             new Object[]{id},
@@ -60,6 +58,16 @@ public class UserDaoImpl implements UserDao {
 
     public void deleteUser(UUID id) {
         jdbcTemplate.update(UtilDB.DELETE_USER, id);
+    }
+
+    @Override
+    public List<User> findAll(int pageSize, int pageNumber) {
+        int offset = (pageNumber - 1) * pageSize;
+        return jdbcTemplate.query(
+            UtilDB.FIND_ALL,
+            new Object[]{pageSize, offset},
+            new UserRowMapper()
+        );
     }
 
     private static class UserRowMapper implements RowMapper<User> {
