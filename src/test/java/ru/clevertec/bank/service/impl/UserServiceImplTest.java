@@ -10,6 +10,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.clevertec.bank.dao.UserDao;
 import ru.clevertec.bank.dto.UserDto;
@@ -37,7 +40,6 @@ class UserServiceImplTest {
     private UserDtoValidator validator;
     @InjectMocks
     private UserServiceImpl userService;
-
 
     @Test
     void testCreateUserShouldReturnId() {
@@ -150,6 +152,25 @@ class UserServiceImplTest {
         // then
         verify(userDao).deleteUser(userId);
 
+    }
+
+    @Test
+    void testFindAllShouldReturnUsersList() {
+        // given
+        int pageSize = 5;
+        int pageNumber = 1;
+        List<User> mockUserList = Arrays.asList(UserTestData.builder().build().buildUser());
+        List<UserDto> expectedUserDtoList = Arrays.asList(
+            UserTestData.builder().build().buildUserDto());
+
+        Mockito.when(userDao.findAll(pageSize, pageNumber)).thenReturn(mockUserList);
+        Mockito.when(mapper.toListUserDto(mockUserList)).thenReturn(expectedUserDtoList);
+
+        // when
+        List<UserDto> actualUserDtoList = userService.findAll(pageSize, pageNumber);
+
+        // then
+        assertEquals(expectedUserDtoList, actualUserDtoList);
     }
 
 }
