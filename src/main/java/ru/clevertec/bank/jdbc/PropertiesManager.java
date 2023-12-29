@@ -13,8 +13,8 @@ public class PropertiesManager {
 
     static {
         try {
-            properties.load(
-                PropertiesManager.class.getClassLoader().getResourceAsStream("application.yml"));
+            properties.load(PropertiesManager.class.getClassLoader()
+                .getResourceAsStream("application.yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,5 +1,6 @@
 package ru.clevertec.bank.service.impl;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -82,6 +83,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(UUID id) {
         userDao.deleteUser(id);
+    }
+
+    /**
+     * Возвращает список пользователей.
+     *
+     * @param pageSize   количество пользователей на странице
+     * @param pageNumber номер страницы
+     * @return список пользователей
+     */
+    @Override
+    public List<UserDto> findAll(int pageSize, int pageNumber) {
+        pageSize = (pageSize <= 0) ? 5 : pageSize;
+        return mapper.toListUserDto(userDao.findAll(pageSize, pageNumber));
     }
 
 }
