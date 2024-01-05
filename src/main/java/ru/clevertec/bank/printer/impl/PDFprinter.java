@@ -13,10 +13,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.clevertec.bank.dto.UserDto;
 import ru.clevertec.bank.printer.Print;
 
 @Slf4j
+@Component
 public class PDFprinter implements Print<UserDto> {
 
     private static final String COVER = "src/main/resources/Clevertec_Template.pdf";

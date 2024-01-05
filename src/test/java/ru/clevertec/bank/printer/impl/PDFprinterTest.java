@@ -7,17 +7,20 @@ import java.nio.file.Path;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import ru.clevertec.bank.config.AppConfig;
+import ru.clevertec.bank.config.TestConfig;
 import ru.clevertec.bank.dto.UserDto;
 import ru.clevertec.bank.printer.impl.PDFprinter;
 
+@SpringJUnitConfig(TestConfig.class)
 class PDFprinterTest {
 
+    @Autowired
     private PDFprinter pdfPrinter;
 
-    @BeforeEach
-    void setUp() {
-        this.pdfPrinter = new PDFprinter();
-    }
 
     @Test
     void printToPDFShouldCreatePdfFile() {

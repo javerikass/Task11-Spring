@@ -1,7 +1,9 @@
-db.url=jdbc:postgresql://localhost:5432/postgres
-db.username=postgres
-db.password=pass
-db.driver=org.postgresql.Driver
-cache=LRU
-capacity=16
-initDB=true
+db:
+  url: jdbc:postgresql://localhost:5432/postgres
+  username: postgres
+  password: pass
+  driver: org.postgresql.Driver
+
+cache: LRU
+capacity: 16
+initDB: false

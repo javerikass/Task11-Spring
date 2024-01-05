@@ -3,17 +3,19 @@ package ru.clevertec.bank.cache.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import ru.clevertec.bank.cache.Cache;
+import ru.clevertec.bank.config.TestConfig;
 
+@SpringJUnitConfig(TestConfig.class)
 class LFUCacheTest {
 
-    private LFUCache<String, Integer> cache;
-
-    @BeforeEach
-    void setUp() {
-        cache = new LFUCache<>();
-    }
+    @Autowired
+    @Qualifier("LFUCache")
+    private Cache<String, Integer> cache;
 
     @Test
     void testPutAndGetShouldPutAnGetRightValue() {

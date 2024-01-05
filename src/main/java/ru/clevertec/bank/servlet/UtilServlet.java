@@ -7,8 +7,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class UtilServlet {
 
     public static void defaultMethod(HttpServletResponse response) throws IOException {
