@@ -3,20 +3,20 @@ package ru.clevertec.bank.cache;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import ru.clevertec.bank.cache.factory.CacheFactoryImpl;
+import org.springframework.stereotype.Component;
 import ru.clevertec.bank.entity.User;
 
 @Aspect
+@Component
+@RequiredArgsConstructor
 public class CacheSynchronizer {
 
     private final Cache<UUID, User> cache;
 
-    public CacheSynchronizer() {
-        this.cache = new CacheFactoryImpl<UUID, User>().createCache();
-    }
 
     @Around("execution(* ru.clevertec.bank.dao.UserDao.getUserById(java.util.UUID)) && args(id)")
     public Object syncGetUserById(ProceedingJoinPoint joinPoint, UUID id) throws Throwable {

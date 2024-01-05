@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.bank.dao.UserDao;
 import ru.clevertec.bank.dto.UserDto;
 import ru.clevertec.bank.entity.User;
@@ -13,17 +16,15 @@ import ru.clevertec.bank.service.UserService;
 import ru.clevertec.bank.validator.UserDtoValidator;
 
 @Slf4j
+@Service
+@Transactional
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserMapper mapper;
     private final UserDao userDao;
     private final UserDtoValidator validator;
 
-    public UserServiceImpl(UserMapper mapper, UserDao userDao, UserDtoValidator validator) {
-        this.mapper = mapper;
-        this.userDao = userDao;
-        this.validator = validator;
-    }
 
     /**
      * Создает нового пользователя на основе данных из объекта UserDto.
@@ -42,8 +43,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = mapper.toUser(userDto);
         UUID id = userDao.createUser(user);
-        Optional<UUID> result = Optional.ofNullable(id);
-        return result;
+        return Optional.ofNullable(id);
     }
 
     /**

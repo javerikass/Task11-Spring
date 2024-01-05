@@ -21,6 +21,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import ru.clevertec.bank.config.TestConfig;
 import ru.clevertec.bank.dao.UserDao;
 import ru.clevertec.bank.dto.UserDto;
 import ru.clevertec.bank.entity.User;

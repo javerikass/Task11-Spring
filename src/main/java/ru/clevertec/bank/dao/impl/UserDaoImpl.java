@@ -7,22 +7,21 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Component;
 import ru.clevertec.bank.dao.UserDao;
 import ru.clevertec.bank.dao.UtilDB;
 import ru.clevertec.bank.entity.User;
-import ru.clevertec.bank.jdbc.ConnectionPool;
 
+@Component
+@RequiredArgsConstructor
 public class UserDaoImpl implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;
-
-    public UserDaoImpl() {
-        this.jdbcTemplate = new JdbcTemplate(ConnectionPool.getDataSource());
-    }
 
     public UUID createUser(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -56,10 +55,6 @@ public class UserDaoImpl implements UserDao {
             user.getId());
     }
 
-    public void deleteUser(UUID id) {
-        jdbcTemplate.update(UtilDB.DELETE_USER, id);
-    }
-
     @Override
     public List<User> findAll(int pageSize, int pageNumber) {
         int offset = (pageNumber - 1) * pageSize;
@@ -68,6 +63,10 @@ public class UserDaoImpl implements UserDao {
             new Object[]{pageSize, offset},
             new UserRowMapper()
         );
+    }
+
+    public void deleteUser(UUID id) {
+        jdbcTemplate.update(UtilDB.DELETE_USER, id);
     }
 
     private static class UserRowMapper implements RowMapper<User> {

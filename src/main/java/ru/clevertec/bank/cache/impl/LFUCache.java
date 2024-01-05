@@ -3,19 +3,19 @@ package ru.clevertec.bank.cache.impl;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import ru.clevertec.bank.cache.Cache;
-import ru.clevertec.bank.jdbc.PropertiesManager;
 
 public class LFUCache<K, V> implements Cache<K, V> {
 
-    private static final int DEFAULT_CAPACITY = Integer.parseInt(
-        PropertiesManager.getProperty("capacity"));
+    @Value("${capacity}")
+    private int defaultCapacity;
     private final int capacity;
     private final Map<K, HitRate> cache;
     private final Map<K, V> storage;
 
     public LFUCache() {
-        this.capacity = DEFAULT_CAPACITY;
+        this.capacity = defaultCapacity;
         this.cache = new HashMap<>(capacity);
         this.storage = new HashMap<>(capacity);
     }
@@ -25,6 +25,7 @@ public class LFUCache<K, V> implements Cache<K, V> {
         this.cache = new HashMap<>(capacity);
         this.storage = new HashMap<>(capacity);
     }
+
     @Override
     public void put(K key, V value) {
         V v = storage.get(key);
@@ -88,5 +89,7 @@ public class LFUCache<K, V> implements Cache<K, V> {
             }
             return Long.compare(lastTime, o.lastTime);
         }
+
     }
+
 }

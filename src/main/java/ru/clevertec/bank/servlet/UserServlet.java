@@ -11,25 +11,25 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import ru.clevertec.bank.dao.impl.UserDaoImpl;
+import org.springframework.context.ApplicationContext;
+import ru.clevertec.bank.config.ApplicationContextUtils;
 import ru.clevertec.bank.dto.UserDto;
-import ru.clevertec.bank.mapper.UserMapperImpl;
 import ru.clevertec.bank.service.UserService;
 import ru.clevertec.bank.service.impl.UserServiceImpl;
-import ru.clevertec.bank.validator.impl.UserDtoValidatorImpl;
 
 @Slf4j
-@WebServlet(urlPatterns = {"/users/save", "/users/delete", "/users/update", "/users/get",
-    "/users/getAll"})
+@WebServlet("/users/*")
 public class UserServlet extends HttpServlet {
 
-    private final Gson mapper = new Gson();
+    private Gson mapper;
     private UserService userService;
+    private ApplicationContext springContext;
 
     @Override
     public void init() {
-        userService = new UserServiceImpl(new UserMapperImpl(), new UserDaoImpl(),
-            new UserDtoValidatorImpl());
+        this.springContext = ApplicationContextUtils.getApplicationContext();
+        this.mapper = springContext.getBean(Gson.class);
+        this.userService = springContext.getBean(UserServiceImpl.class);
     }
 
     @Override
@@ -39,18 +39,18 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        String action = request.getServletPath();
+        String action = request.getPathInfo();
         try {
             switch (action) {
-                case "/users/save" -> saveUser(request, response);
-                case "/users/delete" -> deleteUser(request, response);
-                case "/users/update" -> updateUser(request, response);
-                case "/users/get" -> getUser(request, response);
-                case "/users/getAll" -> getAllUser(request, response);
+                case "/save" -> saveUser(request, response);
+                case "/delete" -> deleteUser(request, response);
+                case "/update" -> updateUser(request, response);
+                case "/get" -> getUser(request, response);
+                case "/getAll" -> getAllUser(request, response);
                 default -> UtilServlet.defaultMethod(response);
             }
-        } catch (IOException | ServletException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            log.error("The URL was not recognized");
         }
     }
 
@@ -92,9 +92,10 @@ public class UserServlet extends HttpServlet {
     }
 
     private void getAllUser(HttpServletRequest request, HttpServletResponse response)
-        throws IOException, ServletException {
+        throws IOException {
         String pageSize =
-            request.getParameter("pageSize") == null ? "0" : request.getParameter("pageSize");
+            request.getParameter("pageSize") == null ? "0"
+                : request.getParameter("pageSize");
         String pageNumber = request.getParameter("pageNumber");
 
         List<UserDto> listUser = userService.findAll(
@@ -111,8 +112,7 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-    private void updateUser(HttpServletRequest request, HttpServletResponse response)
-        throws IOException {
+    private void updateUser(HttpServletRequest request, HttpServletResponse response) {
         String id = request.getParameter("id");
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
@@ -131,8 +131,7 @@ public class UserServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
-    private void deleteUser(HttpServletRequest request, HttpServletResponse response)
-        throws IOException {
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) {
         String id = request.getParameter("id");
         userService.deleteUser(UUID.fromString(id));
         response.setStatus(HttpServletResponse.SC_OK);

@@ -9,22 +9,32 @@ import java.sql.Statement;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import ru.clevertec.bank.config.AppConfig;
+import ru.clevertec.bank.config.ApplicationContextUtils;
 import ru.clevertec.bank.jdbc.ConnectionPool;
-import ru.clevertec.bank.jdbc.PropertiesManager;
 
 @WebListener
 @Slf4j
-@Order(Ordered.LOWEST_PRECEDENCE)
+@NoArgsConstructor
 public class InitListener implements ServletContextListener {
+
+    private String shouldInitDB;
+
+    public InitListener(String shouldInitDB) {
+        this.shouldInitDB = shouldInitDB;
+    }
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         log.info("Context initialization started...");
-        String initBD = PropertiesManager.getProperty("initBD");
-        if (Boolean.parseBoolean(initBD)) {
+        AnnotationConfigApplicationContext rootContext = new AnnotationConfigApplicationContext();
+        rootContext.register(AppConfig.class);
+        rootContext.refresh();
+        ApplicationContextUtils.setApplicationContext(rootContext);
+        if (isRequiredInitializationDB()) {
             initBD();
             log.info("Database initialized.");
         } else {
@@ -33,12 +43,12 @@ public class InitListener implements ServletContextListener {
         log.info("Context initialization completed.");
     }
 
-
     private void initBD() {
         Connection connection = null;
         Statement statement = null;
         try {
-            connection = ConnectionPool.getDataSource().getConnection();
+            connection = ApplicationContextUtils.getApplicationContext()
+                .getBean(ConnectionPool.class).getDataSource().getConnection();
             statement = connection.createStatement();
 
             InputStream inputStream = InitListener.class.getClassLoader()
@@ -64,6 +74,11 @@ public class InitListener implements ServletContextListener {
             }
 
         }
+    }
+
+    private boolean isRequiredInitializationDB() {
+        return Boolean.getBoolean(ApplicationContextUtils.getApplicationContext()
+            .getBean(InitListener.class).shouldInitDB);
     }
 
 }

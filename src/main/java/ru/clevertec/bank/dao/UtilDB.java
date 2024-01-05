@@ -1,9 +1,10 @@
 package ru.clevertec.bank.dao;
 
-public final class UtilDB {
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
-    private UtilDB() {
-    }
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class UtilDB {
 
     public static final String CREATE_USER = "INSERT INTO clevertec_system.users (first_name, last_name, mail, age) VALUES (?, ?, ?, ?)";
     public static final String GET_USER_BY_ID = "SELECT * FROM clevertec_system.users WHERE id = ?";

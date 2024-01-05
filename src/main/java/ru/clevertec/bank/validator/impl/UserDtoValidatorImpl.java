@@ -4,9 +4,10 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.util.Set;
+import org.springframework.stereotype.Component;
 import ru.clevertec.bank.dto.UserDto;
 import ru.clevertec.bank.validator.UserDtoValidator;
-
+@Component
 public class UserDtoValidatorImpl implements UserDtoValidator {
 
     private final Validator validator;

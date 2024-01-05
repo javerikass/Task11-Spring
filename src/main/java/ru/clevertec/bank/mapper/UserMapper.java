@@ -1,11 +1,12 @@
 package ru.clevertec.bank.mapper;
 
 import java.util.List;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import ru.clevertec.bank.dto.UserDto;
 import ru.clevertec.bank.entity.User;
 
-@Mapper
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface UserMapper {
 
     /**

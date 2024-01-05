@@ -2,8 +2,8 @@ package ru.clevertec.bank.cache.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import ru.clevertec.bank.cache.Cache;
-import ru.clevertec.bank.jdbc.PropertiesManager;
 
 public class LRUCache<K, V> implements Cache<K, V> {
 
@@ -23,15 +23,15 @@ public class LRUCache<K, V> implements Cache<K, V> {
 
     }
 
-    private static final int DEFAULT_CAPACITY = Integer.parseInt(
-        PropertiesManager.getProperty("capacity"));
+    @Value("${capacity}")
+    private int defaultCapacity;
     private final int capacity;
     private final Map<K, Node> cache;
     private final Node head;
     private final Node tail;
 
     public LRUCache() {
-        this.capacity = DEFAULT_CAPACITY;
+        this.capacity = defaultCapacity;
         this.cache = new HashMap<>();
         this.head = new Node(null, null);
         this.tail = new Node(null, null);

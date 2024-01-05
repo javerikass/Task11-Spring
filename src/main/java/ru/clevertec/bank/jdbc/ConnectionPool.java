@@ -2,30 +2,37 @@ package ru.clevertec.bank.jdbc;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ConnectionPool {
 
-    private static HikariDataSource dataSource;
+    private final HikariDataSource dataSource;
 
-    private ConnectionPool() {
+    public ConnectionPool(
+        @Value("${db.driver}") String dbDriver,
+        @Value("${db.url}") String dbUrl,
+        @Value("${db.username}") String dbUsername,
+        @Value("${db.password}") String dbPassword) {
+
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName(dbDriver);
+        config.setJdbcUrl(dbUrl);
+        config.setUsername(dbUsername);
+        config.setPassword(dbPassword);
+
+        this.dataSource = new HikariDataSource(config);
     }
 
-    public static synchronized HikariDataSource getDataSource() {
-        if (dataSource == null) {
-            HikariConfig config = new HikariConfig();
-            config.setDriverClassName(PropertiesManager.getProperty(Util.DB_DRIVER));
-            config.setJdbcUrl(PropertiesManager.getProperty(Util.DB_URL_KEY));
-            config.setUsername(PropertiesManager.getProperty(Util.DB_USER_KEY));
-            config.setPassword(PropertiesManager.getProperty(Util.DB_PASS_KEY));
-            dataSource = new HikariDataSource(config);
-        }
+    public DataSource getDataSource() {
         return dataSource;
     }
 
-    public static synchronized void closeDataSource() {
+    public void closeDataSource() {
         if (dataSource != null) {
             dataSource.close();
-            dataSource = null;
         }
     }
 
